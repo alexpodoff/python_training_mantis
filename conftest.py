@@ -1,7 +1,9 @@
 import pytest
 import json
 import os.path
+import importlib
 from fixture.application import Application
+
 
 fixture = None
 target = None
@@ -14,6 +16,7 @@ def load_config(file):
             target = json.load(f)
     return target
 
+
 @pytest.fixture
 def app(request):
     global fixture
@@ -24,7 +27,6 @@ def app(request):
     return fixture
 
 
-
 @pytest.fixture(scope="session", autouse=True)
 def stop(request):
     def fin():
@@ -33,7 +35,25 @@ def stop(request):
     request.addfinalizer(fin)
     return fixture
 
+@pytest.fixture
+def check_ui(request):
+    return request.config.getoption("--check_ui")
+
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="firefox")
     parser.addoption("--target", action="store", default="target.json")
+    parser.addoption("--check_ui", action="store_true")
+
+
+def pytest_generate_tests(metafunc):
+    for fixture in metafunc.fixturenames:
+        if fixture.startswith("data_"):
+            testdata = load_from_module(fixture[5:])
+            metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])
+        elif fixture.startswith("json_"):
+            pass
+
+
+def load_from_module(modeule):
+    return importlib.import_module("data.%s" % modeule).testdata
