@@ -22,11 +22,22 @@ class ProjectHelper:
             wd.find_element_by_name(field_name).clear()
             wd.find_element_by_name(field_name).send_keys(text)
 
+    def select_project_by_name(self, name):
+        wd = self.app.wd
+        wd.find_element_by_link_text("%s" % name).click()
+
     def create_project(self, project):
         wd = self.app.wd
         self.project_page()
         wd.find_element_by_css_selector("input.button-small").click()
         self.fill_project_form(project)
+
+    def delete_project(self, project):
+        wd = self.app.wd
+        self.project_page()
+        self.select_project_by_name(project)
+        wd.find_element_by_xpath("//form[@id='project-delete-form']/fieldset/input[3]").click()
+        wd.find_element_by_xpath("//div[@id='content']/div/form/input[4]").click()
 
     def confirm(self):
         wd = self.app.wd

@@ -9,6 +9,5 @@ def test_create_project(app):
     app.project.create_project(project)
     app.project.confirm()
     old_projects.append(project)
-    new_contacts = app.project.get_project_list()
-    assert old_projects == new_contacts
-
+    new_projects = app.project.get_project_list()
+    assert sorted(old_projects, key=lambda p: p.name) == sorted(new_projects, key=lambda p: p.name)
