@@ -3,7 +3,6 @@ import random
 
 
 def test_del_project(app):
-    app.session.login("administrator", "secret")
     if app.project.get_project_list() == 0:
         app.project.create_project(Project(name="test"))
         app.project.confirm()

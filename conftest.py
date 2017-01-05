@@ -27,8 +27,9 @@ def config(request):
 def app(request, config):
     global fixture
     browser = request.config.getoption("--browser")
-    if fixture is None or not fixture.is_valid:
+    if fixture is None or not fixture.is_valid():
         fixture = Application(browser=browser, config=config)
+    fixture.session.enshure_login(username=config["webadmin"]["username"], passwd=config["webadmin"]["password"])
     return fixture
 
 
